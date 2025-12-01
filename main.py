@@ -6,9 +6,10 @@ B=3/13
 pi = np.pi
 
 eps = 1e-4
+s = 2
 
 # 1.2
-h_by_first_step = first_step(0, 1e-4, 2)
+h_by_first_step = first_step(0, eps, s)
 result_with_first_step = integrate_system(h_by_first_step)
 x_vals_first_step = [point[0] for point in result_with_first_step]
 y1_vals_first_step = [point[1][0] for point in result_with_first_step]
@@ -46,3 +47,28 @@ plt.legend()
 plt.title('Solve the system with first step')
 plt.grid(True)
 plt.show()
+
+# 2.1 
+x0 = 0
+y0 = np.array([B * pi, A * pi])
+
+x_final, y_final = auto_step(x0, y0, eps, s)
+
+# Compare with fixed step for verification
+print("\n" + "=" * 70)
+print("COMPARISON WITH FIXED STEP SIZE")
+print("=" * 70)
+
+h_fixed = first_step(x0, eps, s)
+result_fixed = integrate_system(h_fixed)
+x_fixed = result_fixed[-1][0]
+y_fixed = result_fixed[-1][1]
+
+print(f"Fixed step size h = {h_fixed:.6f}")
+print(f"Result with fixed step:")
+print(f"  x_final = {x_fixed:.6f}, y_final = {y_fixed}")
+print(f"\nResult with automatic step:")
+print(f"  x_final = {x_final:.6f}, y_final = {y_final}")
+print(f"\nDifference:")
+print(f"  Δy1 = {abs(y_fixed[0] - y_final[0]):.2e}")
+print(f"  Δy2 = {abs(y_fixed[1] - y_final[1]):.2e}")
