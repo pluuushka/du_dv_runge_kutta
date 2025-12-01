@@ -7,18 +7,6 @@ pi = np.pi
 
 eps = 1e-4
 
-def integrate_system(h=0.0001):
-    x = 0
-    y = np.array([B * pi, A * pi])  # start condition
-    trajectory = [(x, y.copy())]
-    while x < pi:
-        if ((x + h) > pi):
-            step_error = pi - x
-        y = runge_kutta(x, y, step_error)
-        x += h
-        trajectory.append((x, y.copy()))
-    return trajectory
-
 # 1.2
 h_by_first_step = first_step(0, 1e-4, 2)
 result_with_first_step = integrate_system(h_by_first_step)
