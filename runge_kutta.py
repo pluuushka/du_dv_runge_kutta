@@ -28,7 +28,7 @@ def first_step(x0, eps, s):
     norm_f0 = np.linalg.norm(f(x0, [B * np.pi, A * np.pi])) # x0 = 0, xk = pi
     delta = (1 / np.pi) ** (s + 1) + (norm_f0)**(s + 1) # s = 2
 
-    h1 = (eps / delta)**(1/s+1)
+    h1 = (eps / delta)**(1/(s+1))
 
     if norm_f0 < 1e-10:
         y_eiler = [B * np.pi, A * np.pi] + h1 * f(x0, [B * np.pi, A * np.pi])
@@ -54,7 +54,10 @@ def integrate_system(h=0.0001):
         if ((x + h) > pi):
             step_error = pi - x
             y = runge_kutta(x, y, step_error)
-        x += h
+            x = pi
+        else:
+            y = runge_kutta(x, y, h)
+            x += h
         trajectory.append((x, y.copy()))
     return trajectory
 
