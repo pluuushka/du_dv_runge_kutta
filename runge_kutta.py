@@ -94,7 +94,7 @@ def auto_step(x0, y0, eps, s, ro=1e-5):
         print(f"Thresholds: ε·2^s = {ro * 2**s:.2e}, ε = {ro:.2e}, ε/2^(s+1) = {ro / 2**(s+1):.2e}")
         
         # Determine which case applies
-        if rho > ro * 2**s:
+        if rho > ro * 2**s: # the situation where is local error is to big, we're need to take more small step, like h/2
             print("CASE 1: ρ > ε·2^s")
             print("  Reason: Error is too large")
             print("  Action: Halve the step and recalculate at the same point")
@@ -103,11 +103,10 @@ def auto_step(x0, y0, eps, s, ro=1e-5):
             print("  Approximation rejected, recalculating with new step")
             continue
         
-        elif ro < rho <= ro * 2**s:
+        elif ro < rho <= ro * 2**s: # also bad, but we can take half-step solution
             print("CASE 2: ε < ρ ≤ ε·2^s")
             print("  Reason: Error exceeds tolerance but is within limits")
             print("  Action: Accept the two-step approximation (y_half_step2)")
-            y_old = y.copy()
             y = y_half_step2
             x_old = x
             x = x + h
@@ -116,11 +115,10 @@ def auto_step(x0, y0, eps, s, ro=1e-5):
             print(f"  Accepted y = {y}")
             print(f"  Next step: h = {h_next:.6f}")
         
-        elif ro / 2**(s+1) <= rho <= ro:
+        elif ro / 2**(s+1) <= rho <= ro: # vse na mazi, kaifuem
             print("CASE 3: ε/2^(s+1) ≤ ρ ≤ ε")
             print("  Reason: Error is within acceptable limits")
             print("  Action: Accept one-step approximation, keep step unchanged")
-            y_old = y.copy()
             y = y1_step
             x_old = x
             x = x + h
@@ -129,11 +127,10 @@ def auto_step(x0, y0, eps, s, ro=1e-5):
             print(f"  Accepted y = {y}")
             print(f"  Step unchanged: h = {h_next:.6f}")
         
-        else:  # rho < ro / 2**(s+1)
+        else:  # rho < ro / 2**(s+1) ocheno malo... nado brat' bol'she
             print("CASE 4: ρ < ε/2^(s+1)")
             print("  Reason: Error is significantly below tolerance")
             print("  Action: Accept one-step approximation, double the step")
-            y_old = y.copy()
             y = y1_step
             x_old = x
             x = x + h
