@@ -66,9 +66,6 @@ y_fixed = result_fixed[-1][1]
 
 print(f"Fixed step size h = {h_fixed:.6f}")
 print(f"Result with fixed step:")
-print(f"  x_final = {x_fixed:.6f}, y_final = {y_fixed}")
+print(f"  x_final = {x_fixed:.6f}, y_final = [{y_fixed[0]}, {y_fixed[1]:.15e}]")
 print(f"\nResult with automatic step:")
-print(f"  x_final = {x_final:.6f}, y_final = {y_final}")
-print(f"\nDifference:")
-print(f"  Δy1 = {abs(y_fixed[0] - y_final[0]):.2e}")
-print(f"  Δy2 = {abs(y_fixed[1] - y_final[1]):.2e}")
+print(f"  x_final = {x_final:.6f}, y_final = [{y_final[0]}, {y_final[1]:.15e}]")
