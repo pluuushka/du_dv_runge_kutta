@@ -22,19 +22,6 @@ print(f"y1(pi) = {y1_vals_first_step[-1]}")
 print(f"y2(pi) = {y2_vals_first_step[-1]}")
 print(f"h_by_first_step = {h_by_first_step}")
 
-def estimate_error(h):
-    traj_h = integrate_system(h)
-    traj_h2 = integrate_system(h/2)
-    
-    error = 0
-    for i, (x, y_h) in enumerate(traj_h):
-        for x2, y_h2 in traj_h2:
-            if abs(x - x2) < 1e-10: 
-                current_error = np.linalg.norm(y_h - y_h2) # divisor is (2^s-1), where s = 2
-                error = max(error, current_error)
-                break
-    
-    return error / (2**2 - 1)
 
 print(f"full error = {estimate_error(h_by_first_step)}")
 
@@ -69,3 +56,6 @@ print(f"Result with fixed step:")
 print(f"  x_final = {x_fixed:.6f}, y_final = [{y_fixed[0]}, {y_fixed[1]:.15e}]")
 print(f"\nResult with automatic step:")
 print(f"  x_final = {x_final:.6f}, y_final = [{y_final[0]}, {y_final[1]:.15e}]")
+
+# Usage function first_step from runge_kutta.py 
+# with eps = 1e-4 and s = 4 for 3 volume
