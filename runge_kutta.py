@@ -190,14 +190,13 @@ def exact_solution(x):
     return np.array([y1, y2])
 
 def auto_step_4th(x0, y0, eps, s=4, ro=1e-5, track_data=True):
-    """Автоматический выбор шага для метода 4-го порядка с возможностью сбора данных"""
     h = first_step(x0, eps, s)
     x = x0
     y = y0
     
     iteration = 0
-    step_history = []  # Для хранения истории шагов
-    error_ratio_history = []  # Для хранения отношения погрешностей
+    step_history = []
+    error_ratio_history = []
     
     if track_data:
         print("=" * 70)
@@ -286,7 +285,7 @@ def integrate_system_4th(h=0.0001):
 
 
 
-def integrate_with_errors(h):
+def integrate_with_errors_4th(h):
     x = 0
     
     y = np.array([B * pi, A * pi])
@@ -314,19 +313,47 @@ def integrate_with_errors(h):
     
     return errors
 
+def integrate_with_errors_2nd(h):
+    x = 0
+    
+    y = np.array([B * pi, A * pi])
+    
+    errors = [] # (x, error)
+    
+    while x < pi:
+        if x + h > pi:
+            h_actual = pi - x
+        else:
+            h_actual = h
+        
+      
+        y_new = runge_kutta(x, y, h_actual)
+        
+        x_new = x + h_actual
+        
+        y_exact = exact_solution(x_new)
+        
+        full_error = norm(y_new - y_exact)
+        errors.append((x_new, full_error))
+        
+        x = x_new
+        y = y_new
+    
+    return errors
+
 def estimate_error_4th(h):
     traj_h = integrate_system_4th(h)
     traj_h2 = integrate_system_4th(h/2)
     
     error = 0
-    for i, (x, y_h) in enumerate(traj_h):
+    for (x, y_h) in enumerate(traj_h):
         for x2, y_h2 in traj_h2:
             if abs(x - x2) < 1e-10: 
                 current_error = np.linalg.norm(y_h - y_h2) # divisor is (2^s-1), where s = 2
                 error = max(error, current_error)
                 break
     
-    return error / (2**2 - 1)
+    return error / (2**4 - 1)
 
 
 
