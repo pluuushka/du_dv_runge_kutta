@@ -1,5 +1,6 @@
 from runge_kutta import *
 import matplotlib.pyplot as plt
+from task3 import main_task3
 
 A=2/11
 B=3/13
@@ -124,3 +125,5 @@ for bar, h in zip(bars, h_values):
 plt.suptitle('ЗАДАНИЕ 3.2: Зависимость истинной полной погрешности от x', fontsize=16)
 plt.tight_layout()
 plt.show()
+
+main_task3()
