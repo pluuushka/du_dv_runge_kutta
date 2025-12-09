@@ -1,5 +1,6 @@
 from runge_kutta import *
 import matplotlib.pyplot as plt
+from task3 import main_task3
 
 A=2/11
 B=3/13
@@ -22,19 +23,6 @@ print(f"y1(pi) = {y1_vals_first_step[-1]}")
 print(f"y2(pi) = {y2_vals_first_step[-1]}")
 print(f"h_by_first_step = {h_by_first_step}")
 
-def estimate_error(h):
-    traj_h = integrate_system(h)
-    traj_h2 = integrate_system(h/2)
-    
-    error = 0
-    for i, (x, y_h) in enumerate(traj_h):
-        for x2, y_h2 in traj_h2:
-            if abs(x - x2) < 1e-10: 
-                current_error = np.linalg.norm(y_h - y_h2) # divisor is (2^s-1), where s = 2
-                error = max(error, current_error)
-                break
-    
-    return error / (2**2 - 1)
 
 print(f"full error = {estimate_error(h_by_first_step)}")
 
@@ -69,3 +57,73 @@ print(f"Result with fixed step:")
 print(f"  x_final = {x_fixed:.6f}, y_final = [{y_fixed[0]}, {y_fixed[1]:.15e}]")
 print(f"\nResult with automatic step:")
 print(f"  x_final = {x_final:.6f}, y_final = [{y_final[0]}, {y_final[1]:.15e}]")
+
+# Usage function first_step from runge_kutta.py 
+# with eps = 1e-4 and s = 4 for 3 volume
+
+h_opt_2nd = first_step(0, 1e-4, 2)
+h_opt_4th = first_step(0, 1e-4, 4)
+
+errors_2nd = integrate_with_errors_2nd(h_opt_2nd)
+errors_4th = integrate_with_errors_4th(h_opt_4th)
+
+x_vals_2nd = [point[0] for point in errors_2nd]
+error_vals_2nd = [point[1] for point in errors_2nd]
+
+x_vals_4th = [point[0] for point in errors_4th]
+error_vals_4th = [point[1] for point in errors_4th]
+
+fig, axes = plt.subplots(2, 2, figsize=(14, 10))
+
+
+ax1 = axes[0, 0]
+ax1.semilogy(x_vals_2nd, error_vals_2nd, 'b-', linewidth=1.5)
+ax1.set_xlabel('x', fontsize=12)
+ax1.set_ylabel('Истинная полная погрешность', fontsize=12)
+ax1.set_title(f'Метод 2-го порядка\nh = {h_opt_2nd:.4e}, ε = {eps}', fontsize=14)
+ax1.grid(True, alpha=0.3)
+ax1.axhline(y=eps, color='r', linestyle='--', alpha=0.7, label=f'Целевая точность ε = {eps}')
+ax1.legend(fontsize=10)
+
+
+ax2 = axes[0, 1]
+ax2.semilogy(x_vals_4th, error_vals_4th, 'r-', linewidth=1.5)
+ax2.set_xlabel('x', fontsize=12)
+ax2.set_ylabel('Истинная полная погрешность', fontsize=12)
+ax2.set_title(f'Метод 4-го порядка\nh = {h_opt_4th:.4e}, ε = {eps}', fontsize=14)
+ax2.grid(True, alpha=0.3)
+ax2.axhline(y=eps, color='r', linestyle='--', alpha=0.7, label=f'Целевая точность ε = {eps}')
+ax2.legend(fontsize=10)
+
+
+ax3 = axes[1, 0]
+ax3.semilogy(x_vals_2nd, error_vals_2nd, 'b-', label='Метод 2-го порядка', linewidth=1.5)
+ax3.semilogy(x_vals_4th, error_vals_4th, 'r-', label='Метод 4-го порядка', linewidth=1.5)
+ax3.set_xlabel('x', fontsize=12)
+ax3.set_ylabel('Истинная полная погрешность', fontsize=12)
+ax3.set_title('Сравнение погрешностей методов', fontsize=14)
+ax3.grid(True, alpha=0.3)
+ax3.legend(fontsize=11)
+
+
+ax4 = axes[1, 1]
+methods = ['Метод 2-го порядка', 'Метод 4-го порядка']
+h_values = [h_opt_2nd, h_opt_4th]
+colors = ['blue', 'red']
+
+bars = ax4.bar(methods, h_values, color=colors, alpha=0.7)
+ax4.set_ylabel('Оптимальный шаг h', fontsize=12)
+ax4.set_title('Сравнение оптимальных шагов', fontsize=14)
+ax4.grid(True, alpha=0.3, axis='y')
+
+
+for bar, h in zip(bars, h_values):
+    height = bar.get_height()
+    ax4.text(bar.get_x() + bar.get_width()/2., height,
+            f'{h:.2e}', ha='center', va='bottom', fontsize=11)
+
+plt.suptitle('ЗАДАНИЕ 3.2: Зависимость истинной полной погрешности от x', fontsize=16)
+plt.tight_layout()
+plt.show()
+
+main_task3()
